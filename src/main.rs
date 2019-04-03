@@ -6,7 +6,7 @@ mod engine;
 use engine::{Command, Engine};
 
 fn main() {
-    println!("Hello, world!");
+    println!("Started.");
     let mut eng = Engine::new();
 
     eng.start();
