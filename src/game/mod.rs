@@ -4,6 +4,10 @@ use std::sync::{Arc, Mutex};
 use std::thread;
 use std::time::{Duration, Instant};
 
+mod state;
+
+use state::GameState;
+
 const TICK_DURATION: Duration = Duration::from_millis(10);
 
 pub struct Game {
@@ -89,29 +93,5 @@ impl From<GameState> for RenderState {
             tick: state.tick,
             points: state.points,
         }
-    }
-}
-
-#[derive(Clone, Copy)]
-struct GameState {
-    tick: u128,
-    points: u32,
-}
-
-impl GameState {
-    fn new() -> Self {
-        GameState { tick: 0, points: 0 }
-    }
-
-    fn step(mut self, cmd: Option<Command>) -> Self {
-        self.tick += 1;
-        if let Some(cmd) = cmd {
-            match cmd {
-                Command::AddPoint => {
-                    self.points += 1;
-                }
-            }
-        }
-        self
     }
 }
