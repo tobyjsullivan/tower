@@ -1,13 +1,13 @@
 use std::thread;
 use std::time::Duration;
 
-mod engine;
+mod game;
 
-use engine::{Command, Engine};
+use game::{Command, Game};
 
 fn main() {
     println!("Started.");
-    let mut eng = Engine::new();
+    let mut eng = Game::new();
 
     eng.start();
 

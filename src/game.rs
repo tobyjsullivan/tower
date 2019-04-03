@@ -6,14 +6,14 @@ use std::time::{Duration, Instant};
 
 const TICK_DURATION: Duration = Duration::from_millis(10);
 
-pub struct Engine {
+pub struct Game {
     cmd_queue: Option<Sender<Command>>,
     mx_render_state: Arc<Mutex<Option<RenderState>>>,
 }
 
-impl Engine {
+impl Game {
     pub fn new() -> Self {
-        Engine {
+        Self {
             cmd_queue: None,
             mx_render_state: Arc::new(Mutex::new(None)),
         }
