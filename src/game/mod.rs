@@ -6,9 +6,7 @@ use std::time::{Duration, Instant};
 
 mod state;
 
-use state::GameState;
-
-const TICK_DURATION: Duration = Duration::from_millis(10);
+use state::{GameState, TICK_DURATION};
 
 pub struct Game {
     cmd_queue: Option<Sender<Command>>,
