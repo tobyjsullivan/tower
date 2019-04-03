@@ -5,6 +5,7 @@ use std::thread;
 use std::time::{Duration, Instant};
 
 mod state;
+mod time;
 
 use state::{GameState, TICK_DURATION};
 

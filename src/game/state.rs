@@ -1,5 +1,6 @@
 use std::time::Duration;
 
+use super::time::TimeState;
 use crate::game::Command;
 
 const TICK_DURATION_MILLIS: u32 = 10;
@@ -28,7 +29,7 @@ impl GameState {
 
     pub fn step(mut self, cmd: Option<Command>) -> Self {
         self.tick += 1;
-        self.time.advance(TICK_DURATION_MILLIS);
+        self.time.advance(TICK_DURATION_MILLIS * self.speed);
         if let Some(cmd) = cmd {
             match cmd {
                 Command::AddPoint => {
@@ -37,43 +38,6 @@ impl GameState {
             }
         }
         self
-    }
-}
-
-#[derive(Clone, Copy)]
-/// Represents the current in-game time.
-/// This should advance relative to real-time in accordance with game speed setting.
-pub struct TimeState {
-    pub day: u32,
-    pub second: u32,
-    next_second: u32,
-}
-
-impl TimeState {
-    const MILLIS_PER_SEC: u32 = 1000;
-    const SECS_PER_DAY: u32 = 86400;
-
-    fn new() -> Self {
-        Self {
-            day: 0,
-            second: 0,
-            next_second: Self::MILLIS_PER_SEC,
-        }
-    }
-
-    fn advance(&mut self, mut millis: u32) {
-        while self.next_second <= millis {
-            self.second += 1;
-            millis -= self.next_second;
-            self.next_second = Self::MILLIS_PER_SEC;
-        }
-
-        self.next_second -= millis;
-
-        while self.second >= Self::SECS_PER_DAY {
-            self.day += 1;
-            self.second -= Self::SECS_PER_DAY;
-        }
     }
 }
 
@@ -92,7 +56,7 @@ mod tests {
     }
 
     #[test]
-    fn test_time_advance_second() {
+    fn test_step_advances_time() {
         let mut state = GameState::new();
         state.time.advance(995);
 
@@ -103,17 +67,14 @@ mod tests {
     }
 
     #[test]
-    fn test_time_advance_day() {
+    fn test_step_advances_time_at_speed() {
         let mut state = GameState::new();
-        state.time = TimeState {
-            day: 3,
-            second: 86399,
-            next_second: 5,
-        };
+        state.speed = 6;
+        state.time.advance(950);
 
         state = state.step(None);
 
-        assert_eq!(state.time.day, 4);
-        assert_eq!(state.time.second, 0);
+        assert_eq!(state.time.day, 0);
+        assert_eq!(state.time.second, 1);
     }
 }
