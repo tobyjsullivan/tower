@@ -1,6 +1,10 @@
-use std::sync::mpsc::{channel, Receiver, Sender, TryRecvError};
+use std::ops::{Add, Sub};
+use std::sync::mpsc::{channel, Sender, TryRecvError};
 use std::sync::{Arc, Mutex};
 use std::thread;
+use std::time::{Duration, Instant};
+
+const TICK_DURATION: Duration = Duration::from_millis(10);
 
 pub struct Engine {
     cmd_queue: Option<Sender<Command>>,
@@ -23,20 +27,32 @@ impl Engine {
 
         thread::spawn(move || {
             let mut state = GameState::new();
+            let mut lag = Duration::from_secs(0);
+            let mut last = Instant::now();
             loop {
-                // Read a command if present
-                let cmd = match receiver.try_recv() {
-                    Ok(cmd) => Some(cmd),
-                    Err(TryRecvError::Empty) => None,
-                    Err(TryRecvError::Disconnected) => {
-                        // Time to close.
-                        break;
-                    }
-                };
+                let current = Instant::now();
+                let elapsed = current.duration_since(last);
+                last = current;
+                lag = lag.add(elapsed);
 
-                state = state.step(cmd);
+                while lag >= TICK_DURATION {
+                    // Read a command if present
+                    let cmd = match receiver.try_recv() {
+                        Ok(cmd) => Some(cmd),
+                        Err(TryRecvError::Empty) => None,
+                        Err(TryRecvError::Disconnected) => {
+                            // Time to close.
+                            break;
+                        }
+                    };
+
+                    // Run update
+                    state = state.step(cmd);
+                    lag = lag.sub(TICK_DURATION);
+                }
+
+                // Render output
                 let rs: RenderState = state.into();
-
                 let mut ptr_render_state = mx_render_state.lock().unwrap();
                 *ptr_render_state = Some(rs);
             }
