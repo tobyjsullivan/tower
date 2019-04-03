@@ -1,6 +1,4 @@
-use crate::game::Command;
-
-pub const TICK_DURATION_MILLIS: u32 = 10;
+use super::{Command, TICK_DURATION_MILLIS};
 
 /// Represents the current in-game time.
 /// This should advance relative to real-time in accordance with game speed setting.

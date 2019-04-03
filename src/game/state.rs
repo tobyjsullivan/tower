@@ -1,9 +1,5 @@
-use std::time::Duration;
-
-use super::time::{TimeState, TICK_DURATION_MILLIS};
-use crate::game::Command;
-
-pub const TICK_DURATION: Duration = Duration::from_millis(TICK_DURATION_MILLIS as u64);
+use super::time::TimeState;
+use super::Command;
 
 pub struct GameState {
     pub points: u32,

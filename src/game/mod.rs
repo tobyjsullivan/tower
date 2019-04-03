@@ -7,7 +7,9 @@ use std::time::{Duration, Instant};
 mod state;
 mod time;
 
-use state::{GameState, TICK_DURATION};
+use state::GameState;
+
+const TICK_DURATION_MILLIS: u32 = 10;
 
 pub struct Game {
     cmd_queue: Option<Sender<Command>>,
@@ -15,6 +17,8 @@ pub struct Game {
 }
 
 impl Game {
+    const TICK_DURATION: Duration = Duration::from_millis(TICK_DURATION_MILLIS as u64);
+
     pub fn new() -> Self {
         Self {
             cmd_queue: None,
@@ -38,7 +42,7 @@ impl Game {
                 last = current;
                 lag = lag.add(elapsed);
 
-                while lag >= TICK_DURATION {
+                while lag >= Self::TICK_DURATION {
                     // Read a command if present
                     let cmd = match receiver.try_recv() {
                         Ok(cmd) => Some(cmd),
@@ -51,7 +55,7 @@ impl Game {
 
                     // Run update
                     state = state.step(cmd);
-                    lag = lag.sub(TICK_DURATION);
+                    lag = lag.sub(Self::TICK_DURATION);
                 }
 
                 // Render output
