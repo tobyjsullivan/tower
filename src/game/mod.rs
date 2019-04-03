@@ -55,7 +55,7 @@ impl Game {
                 }
 
                 // Render output
-                let rs: RenderState = state.into();
+                let rs: RenderState = (&state).into();
                 let mut ptr_render_state = mx_render_state.lock().unwrap();
                 *ptr_render_state = Some(rs);
             }
@@ -86,8 +86,8 @@ pub struct RenderState {
     pub points: u32,
 }
 
-impl From<GameState> for RenderState {
-    fn from(state: GameState) -> Self {
+impl From<&GameState> for RenderState {
+    fn from(state: &GameState) -> Self {
         RenderState {
             tick: state.tick,
             points: state.points,
