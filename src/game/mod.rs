@@ -68,13 +68,13 @@ impl Game {
 
     pub fn apply(&self, cmd: Command) {
         match &self.cmd_queue {
-            Some(queue) => queue.send(cmd).unwrap(),
-            None => {}
+            Some(queue) => queue.send(cmd).expect("Failed to send command over queue."),
+            None => panic!("Attempted to apply command to uninitialised game."),
         }
     }
 
     pub fn get_state(&self) -> Option<RenderState> {
-        let rs = self.mx_render_state.lock().unwrap();
+        let rs = self.mx_render_state.lock().expect("Attempted to get game state but none available.");
         *rs
     }
 }
@@ -84,6 +84,8 @@ pub enum Command {
     AddPoint,
 }
 
+/// The view of the world exposed by the game API. The RenderState should only include information
+/// which is known by the player. Hidden state should be kept within GameState.
 #[derive(Clone, Copy)]
 pub struct RenderState {
     pub tick: u128,
