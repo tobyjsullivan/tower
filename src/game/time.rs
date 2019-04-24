@@ -26,8 +26,18 @@ impl TimeState {
         }
     }
 
-    pub fn step(mut self, _cmd: Option<Command>) -> Self {
+    pub fn step(mut self, cmd: Option<Command>) -> Self {
         self.advance(TICK_DURATION_MILLIS * self.speed);
+
+        if let Some(cmd) = cmd {
+            match cmd {
+                Command::SetSpeed { speed } => {
+                    self.speed = speed;
+                },
+                _ => {},
+            }
+        }
+
         self
     }
 

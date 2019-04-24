@@ -26,6 +26,7 @@ impl GameState {
                 Command::AddPoint => {
                     self.points += 1;
                 }
+                _ => {},
             }
         }
         self

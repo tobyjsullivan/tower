@@ -11,14 +11,19 @@ fn main() {
 
     eng.start();
 
-    for _ in 0..3 {
-        thread::sleep(Duration::from_secs(2));
-        eng.apply(Command::AddPoint);
+    for i in 0..3 {
+        thread::sleep(Duration::from_millis(1900));
+        eng.apply(Command::SetSpeed{speed: 1 + (i * 3600)});
 
+        thread::sleep(Duration::from_millis(100));
         match eng.get_state() {
             Some(state) => {
+                println!("************************");
                 println!("Tick: {}", state.tick);
                 println!("Points: {}", state.points);
+                println!("Speed: {}", state.speed);
+                println!("Day: {}", state.day);
+                println!("Second: {}", state.second);
             }
             None => println!("No state."),
         }

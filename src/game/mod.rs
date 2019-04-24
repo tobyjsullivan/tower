@@ -82,6 +82,7 @@ impl Game {
 #[derive(Clone, Copy)]
 pub enum Command {
     AddPoint,
+    SetSpeed{ speed: u32 },
 }
 
 /// The view of the world exposed by the game API. The RenderState should only include information
@@ -90,6 +91,9 @@ pub enum Command {
 pub struct RenderState {
     pub tick: u128,
     pub points: u32,
+    pub speed: u32,
+    pub day: u32,
+    pub second: u32,
 }
 
 impl From<&GameState> for RenderState {
@@ -97,6 +101,9 @@ impl From<&GameState> for RenderState {
         RenderState {
             tick: state.tick,
             points: state.points,
+            speed: state.time.speed,
+            day: state.time.day,
+            second: state.time.second,
         }
     }
 }
